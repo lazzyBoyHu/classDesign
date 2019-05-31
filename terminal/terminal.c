@@ -3,11 +3,13 @@
 #include <string.h>
 #include <time.h>
 
+#include <sys/types.h>
+#include <sys/socket.h>
 
 
 #define SERVERIP 127.0.0.1
 #define UPDATETIME 30
-#define BUFFER 256
+#define BUFLEN 256
 
 
 enum FacilityState
@@ -26,21 +28,58 @@ enum FacilityState
     FacilityState_Open,
 };
 
+// 根据状态拼接信息
+void getFacilityByType(char * buffer, int type)
+{
+    if (type == FacilityState_Close)
+        strcat(buffer, " state: facility close. ");
+    else if (type == FacilityState_One)
+        strcat(buffer, " state: one. ");
+    else if (type == FacilityState_Two)
+        strcat(buffer, " state: two. ");
+    else if (type == FacilityState_Three)
+        strcat(buffer, " state: three. ");
+    else if (type == FacilityState_Four)
+        strcat(buffer, " state: four. ");
+    else if (type == FacilityState_Five)
+        strcat(buffer, " state: five. ");
+    else if (type == FacilityState_Six)
+        strcat(buffer, " state: six. ");
+    else if (type == FacilityState_Seven)
+        strcat(buffer, " state: seven. ");
+    else if (type == FacilityState_Eight)
+        strcat(buffer, " state: eight. ");
+    else if (type == FacilityState_Nine)
+        strcat(buffer, " state: nine. ");
+    else if (type == FacilityState_Ten)
+        strcat(buffer, " state: ten. ");
+    else
+        strcat(buffer, " state: facility while close. ");
+}
+
 // 参数是设备名
 int main(int argc, char **argv)
 {
     int state = FacilityState_Close;
-    char timeBuffer[BUFFER];
-    string * facilityState;
-    string facilityName;
+    char timeBuffer[BUFLEN];
+    char facilityState[BUFLEN];
+    char *facilityName;
+    time_t t = time(0);
 
     int sockfd;
-    struct sockaddr_in  servaddr;
+    struct sockaddr_in servaddr;
 
     if (argc != 2)
         err_quit("usage: terminal no name");
 
     facilityName = argv[1];
+    strcat(facilityState, argv[1]);
+
+    // 建立连接
+    bzero(&servaddr, sizeof(servaddr));
+    servaddr.sin_family = AF_INET;
+    servaddr.sin_port(8888);
+    sockfd = (AF_INET, SOCK_STREAM, 0);
 
     // 每隔30秒跟新信息
     while (1)
@@ -48,15 +87,16 @@ int main(int argc, char **argv)
         if (state == FacilityState_Open)
             break;
 
-        state;
+        getFacilityByType(facilityState, state);
+        state++;
+        strftime(timeBuffer, BUFLEN, "%Y%m%d%H%M%S", localtime(&t));
+        strcat(facilityState, timeBuffer);
+
+        // 使用 socket 发送数据
+
+        sleep(UPDATETIME);
     }
 
     return 0;
 }
 
-string * getFacilityByType(string * buffer, int type)
-{
-    if (type == FacilityState_Close)
-        buffer->
-    return buffer;
-}
