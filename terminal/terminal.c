@@ -7,7 +7,7 @@
 #include <sys/socket.h>
 
 
-#define SERVERIP 127.0.0.1
+#define SERVERIP "127.0.0.1"
 #define UPDATETIME 30
 #define BUFLEN 256
 
@@ -73,13 +73,19 @@ int main(int argc, char **argv)
         err_quit("usage: terminal no name");
 
     facilityName = argv[1];
+    strcat(facilityState, "facilityName: ");
     strcat(facilityState, argv[1]);
 
     // 建立连接
     bzero(&servaddr, sizeof(servaddr));
     servaddr.sin_family = AF_INET;
     servaddr.sin_port(8888);
-    sockfd = (AF_INET, SOCK_STREAM, 0);
+
+    if (inet_pton(AF_INET, SERVERIP, &servaddr.sin_addr) <= 0)
+        err_quit("inet_pton error for %s", SERVERIP);
+
+    if (connect(sockfd, (SA *) &servaddr, sizeof(servaddr)) < 0)
+        err_sys("connect error");
 
     // 每隔30秒跟新信息
     while (1)
@@ -87,6 +93,7 @@ int main(int argc, char **argv)
         if (state == FacilityState_Open)
             break;
 
+        // 拼接 state 数据
         getFacilityByType(facilityState, state);
         state++;
         strftime(timeBuffer, BUFLEN, "%Y%m%d%H%M%S", localtime(&t));
