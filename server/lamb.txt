@@ -1,2 +1,1 @@
-T; name: lamb; state: two; timestp: 20190610104439;
-;
+T; name: lamb; state: close; timestp: 20190627194431;

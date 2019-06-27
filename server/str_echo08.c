@@ -28,7 +28,7 @@ void do_server(int sockfd)
             end = 0;
 
             strcat(name, ".txt");
-            if (file = fopen(name, "w+") == NULL)
+            if ((file = fopen(name, "w+")) == NULL)
                 continue;
             fprintf(file, line);
             fclose(file);
